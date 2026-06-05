@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Buyurtmalarim')}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('orders')}"></header>
+
+<main class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Mening Buyurtmalarim</h1>
+            <p class="page-subtitle">Ulgurji savdo buyurtmalarining holati va yetkazib berish tarixi</p>
+        </div>
+        <div>
+            <a th:href="@{/orders/create}" class="btn" style="width: auto;">
+                <i class="fa-solid fa-cart-plus"></i> Yangi Buyurtma Berish
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert success when order placed -->
+    <div th:if="${param.success}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Buyurtmangiz muvaffaqiyatli qabul qilindi va ko'rib chiqish jarayonida!</span>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Buyurtma ID</th>
+                        <th>Sana va Vaqt</th>
+                        <th>Buyurtma Tarkibi</th>
+                        <th>Dona</th>
+                        <th>Birlik Narxi</th>
+                        <th>Jami Narx</th>
+                        <th>Holati</th>
+                        <th>Manzil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="'#ORD-' + ${order.id}" style="font-weight: 600;">#ORD-1</td>
+                        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">01.01.2026 12:00</td>
+                        <td>
+                            <div th:each="item : ${order.items}" th:text="${item.product.name}">Jeans</div>
+                        </td>
+                        <td>
+                            <div th:each="item : ${order.items}" th:text="${item.quantity}">100</div>
+                        </td>
+                        <td>
+                            <div th:each="item : ${order.items}" th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}">$35.00</div>
+                        </td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}" style="font-weight: 700; color: var(--accent);">
+                            $3,500.00
+                        </td>
+                        <td>
+                            <span th:if="${order.status == 'PENDING'}" class="badge badge-pending">Kutilmoqda</span>
+                            <span th:if="${order.status == 'PROCESSING'}" class="badge badge-processing">Jarayonda</span>
+                            <span th:if="${order.status == 'COMPLETED'}" class="badge badge-completed">Bajarildi</span>
+                            <span th:if="${order.status == 'CANCELLED'}" class="badge badge-cancelled">Bekor qilindi</span>
+                        </td>
+                        <td th:text="${order.shippingAddress}">Tashkent</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem 0;">
+                            <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; margin-bottom: 1rem; display: block;"></i>
+                            Siz hali birorta ham ulgurji buyurtma bermagansiz.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

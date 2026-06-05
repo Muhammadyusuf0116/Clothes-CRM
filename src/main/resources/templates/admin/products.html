@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Mahsulotlar Boshqaruvi')}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('admin-products')}"></header>
+
+<main class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Kiyim-kechak Mahsulotlari Boshqaruvi</h1>
+            <p class="page-subtitle">Katalogdagi tovarlar ro'yxati, ularni tahrirlash va yangilarini qo'shish paneli</p>
+        </div>
+        <div>
+            <a th:href="@{/admin/products/add}" class="btn">
+                <i class="fa-solid fa-plus-circle"></i> Yangi Mahsulot Qo'shish
+            </a>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${param.success}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Mahsulot muvaffaqiyatli saqlandi!</span>
+    </div>
+    <div th:if="${param.deleted}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Mahsulot tizimdan muvaffaqiyatli o'chirildi.</span>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Rasm</th>
+                        <th>Mahsulot Nomi</th>
+                        <th>SKU kodi</th>
+                        <th>Kategoriya</th>
+                        <th>Ulgurji Narxi</th>
+                        <th>Ombordagi Qoldiq</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product : ${products}">
+                        <td>
+                            <img th:src="${product.imageUrl}" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color);" th:alt="${product.name}">
+                        </td>
+                        <td th:text="${product.name}" style="font-weight: 600;">Premium Cotton T-Shirt</td>
+                        <td th:text="${product.sku}" style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">CLO-T-001</td>
+                        <td th:text="${product.category}">T-Shirts</td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}" style="color: var(--accent); font-weight: 600;">$15.00</td>
+                        <td>
+                            <span th:classappend="${product.stockQuantity < 50} ? 'low' : ''" th:text="${product.stockQuantity} + ' dona'" class="product-stock">250 dona</span>
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="icon-btn edit" title="Tahrirlash">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a th:href="@{/admin/products/delete/{id}(id=${product.id})}" 
+                                   onclick="return confirm('Haqiqatan ham ushbu mahsulotni o\'chirmoqchimisiz?');" 
+                                   class="icon-btn delete" title="O'chirish">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(products)}">
+                        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem 0;">
+                            Hali katalogda mahsulotlar mavjud emas.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

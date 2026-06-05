@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Head Fragment -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Clothing Wholesale CRM'">Clothing CRM</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js (needed for graphs) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<!-- Header Fragment -->
+<header th:fragment="header(activeTab)">
+    <div class="main-header">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="logo">
+                <i class="fa-solid fa-shirt"></i>
+                <span>Clothing<span>CRM</span></span>
+            </a>
+            
+            <ul class="nav-menu" th:if="${currentUser != null}">
+                <!-- Common User Menu -->
+                <li th:if="${currentUser.role == 'ROLE_USER'}">
+                    <a th:href="@{/dashboard}" th:classappend="${activeTab == 'dashboard' ? 'active' : ''}" class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i> Dashboard
+                    </a>
+                </li>
+                <li th:if="${currentUser.role == 'ROLE_USER'}">
+                    <a th:href="@{/products}" th:classappend="${activeTab == 'products' ? 'active' : ''}" class="nav-link">
+                        <i class="fa-solid fa-box-open"></i> Mahsulotlar
+                    </a>
+                </li>
+                <li th:if="${currentUser.role == 'ROLE_USER'}">
+                    <a th:href="@{/orders}" th:classappend="${activeTab == 'orders' ? 'active' : ''}" class="nav-link">
+                        <i class="fa-solid fa-cart-shopping"></i> Buyurtmalarim
+                    </a>
+                </li>
+
+                <!-- Admin Specific Menu -->
+                <li th:if="${currentUser.role == 'ROLE_ADMIN'}">
+                    <a th:href="@{/admin/dashboard}" th:classappend="${activeTab == 'admin-dashboard' ? 'active' : ''}" class="nav-link">
+                        <i class="fa-solid fa-chart-pie"></i> Admin Dashboard
+                    </a>
+                </li>
+                <li th:if="${currentUser.role == 'ROLE_ADMIN'}">
+                    <a th:href="@{/admin/products}" th:classappend="${activeTab == 'admin-products' ? 'active' : ''}" class="nav-link">
+                        <i class="fa-solid fa-boxes-packing"></i> Mahsulotlar Boshqaruvi
+                    </a>
+                </li>
+                <li th:if="${currentUser.role == 'ROLE_ADMIN'}">
+                    <a th:href="@{/admin/orders}" th:classappend="${activeTab == 'admin-orders' ? 'active' : ''}" class="nav-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Buyurtmalar Boshqaruvi
+                    </a>
+                </li>
+                <li th:if="${currentUser.role == 'ROLE_ADMIN'}">
+                    <a th:href="@{/admin/reports}" th:classappend="${activeTab == 'admin-reports' ? 'active' : ''}" class="nav-link">
+                        <i class="fa-solid fa-chart-column"></i> Hisobotlar
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-profile-nav" th:if="${currentUser != null}">
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="logout-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i> Chiqish
+                    </button>
+                </form>
+            </div>
+            
+            <div class="user-profile-nav" th:if="${currentUser == null}">
+                <a th:href="@{/login}" class="btn btn-secondary" style="width: auto; padding: 0.5rem 1rem;">Kirish</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer">
+    <div class="main-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Clothing Wholesale CRM. Barcha huquqlar himoyalangan.</p>
+            <p>BTEC 6-qism: Bulutda Tarmoq Topshirig'i doirasida tayyorlandi.</p>
+        </div>
+    </div>
+    <!-- Custom JS -->
+    <script th:src="@{/js/app.js}"></script>
+</footer>
+
+</html>

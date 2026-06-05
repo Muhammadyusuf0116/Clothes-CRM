@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${product.name})}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('products')}"></header>
+
+<main class="page-container">
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/products}" style="color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-arrow-left"></i> Katalogga qaytish
+        </a>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-img-box">
+            <img th:src="${product.imageUrl}" class="detail-img" th:alt="${product.name}">
+        </div>
+
+        <div class="detail-content">
+            <span class="detail-category" th:text="${product.category}">Turkum</span>
+            <h1 class="detail-name" th:text="${product.name}">Mahsulot Nomi</h1>
+            <div class="detail-sku" th:text="'SKU: ' + ${product.sku}">SKU-10202</div>
+
+            <div class="detail-price-box">
+                <span class="detail-price" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">$0.00</span>
+                <span style="color: var(--text-muted); font-size: 0.9rem;"> / 1 dona uchun (Ulgurji narx)</span>
+            </div>
+
+            <div class="detail-desc" th:text="${product.description}">
+                Batafsil ma'lumot keltirilmagan.
+            </div>
+
+            <div class="detail-meta">
+                <div>
+                    <i class="fa-solid fa-boxes-stacked" style="color: var(--accent); margin-right: 0.25rem;"></i>
+                    <span>Ombordagi qoldiq: </span>
+                    <strong th:text="${product.stockQuantity} + ' dona'">100 dona</strong>
+                </div>
+                <div>
+                    <i class="fa-solid fa-tags" style="color: var(--primary); margin-right: 0.25rem;"></i>
+                    <span>Kategoriya: </span>
+                    <strong th:text="${product.category}">Kiyim</strong>
+                </div>
+            </div>
+
+            <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+                <a th:href="@{/orders/create(productId=${product.id})}" class="btn" style="flex: 2; padding: 1rem;">
+                    <i class="fa-solid fa-cart-shopping"></i> Ulgurji Buyurtma Berish
+                </a>
+                <a th:href="@{/products}" class="btn btn-secondary" style="flex: 1; padding: 1rem;">
+                    Orqaga
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

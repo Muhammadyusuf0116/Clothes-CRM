@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin Dashboard')}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('admin-dashboard')}"></header>
+
+<main class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Tizim Boshqaruvi (Admin)</h1>
+            <p class="page-subtitle">Umumiy savdo tahlillari, buyurtmalar oqimi va kiyim-kechak zaxiralarini nazorat qilish paneli</p>
+        </div>
+        <div>
+            <a th:href="@{/admin/products/add}" class="btn btn-accent" style="width: auto;">
+                <i class="fa-solid fa-plus"></i> Yangi Mahsulot
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Stats widgets -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>Jami Ulgurji Savdo</h3>
+                <div class="stat-value" th:text="'$' + ${#numbers.formatDecimal(stats.totalSales, 1, 'COMMA', 2, 'POINT')}">$0.00</div>
+            </div>
+            <div class="stat-icon success">
+                <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>Jami Buyurtmalar</h3>
+                <div class="stat-value" th:text="${stats.totalOrders}">0</div>
+            </div>
+            <div class="stat-icon primary">
+                <i class="fa-solid fa-cart-flatbed-suitcases"></i>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>Kutilayotgan Buyurtmalar</h3>
+                <div class="stat-value" th:text="${stats.pendingOrders}">0</div>
+            </div>
+            <div class="stat-icon warning">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>Kiyim Modellari</h3>
+                <div class="stat-value" th:text="${stats.totalProducts}">0</div>
+            </div>
+            <div class="stat-icon accent">
+                <i class="fa-solid fa-shirt"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin dashboard grids -->
+    <div class="dashboard-grid">
+        <!-- Recent Orders -->
+        <div class="dashboard-card">
+            <div class="card-title">
+                <span>So'nggi 5 ta Buyurtmalar</span>
+                <a th:href="@{/admin/orders}" style="font-size: 0.85rem; color: var(--accent);"><i class="fa-solid fa-sliders"></i> Barchasini boshqarish</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Mijoz</th>
+                            <th>Sana</th>
+                            <th>Jami Summa</th>
+                            <th>Holati</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${recentOrders}">
+                            <td>
+                                <div th:text="${order.user.fullName}" style="font-weight: 600;">Client Name</div>
+                                <div th:text="${order.user.email}" style="font-size: 0.75rem; color: var(--text-muted);">email@example.com</div>
+                            </td>
+                            <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">01.01.2026</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}" style="font-weight: 600;">$0.00</td>
+                            <td>
+                                <span th:if="${order.status == 'PENDING'}" class="badge badge-pending">Kutilmoqda</span>
+                                <span th:if="${order.status == 'PROCESSING'}" class="badge badge-processing">Jarayonda</span>
+                                <span th:if="${order.status == 'COMPLETED'}" class="badge badge-completed">Bajarildi</span>
+                                <span th:if="${order.status == 'CANCELLED'}" class="badge badge-cancelled">Bekor qilindi</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentOrders)}">
+                            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">Tizimda hali buyurtmalar mavjud emas.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Inventory Warning / Quick Stats -->
+        <div class="dashboard-card" style="display: flex; flex-direction: column;">
+            <div class="card-title">
+                <span>Ombor Qoldiqlari</span>
+                <a th:href="@{/admin/products}" style="font-size: 0.85rem; color: var(--accent);"><i class="fa-solid fa-boxes-stacked"></i> Katalog</a>
+            </div>
+            
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 1rem;">
+                <div th:each="product : ${products}" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+                    <div>
+                        <div th:text="${product.name}" style="font-size: 0.9rem; font-weight: 600;">Cotton Shirt</div>
+                        <div th:text="${product.sku}" style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">SKU</div>
+                    </div>
+                    <span th:classappend="${product.stockQuantity < 50} ? 'low' : ''" class="product-stock" th:text="${product.stockQuantity} + ' ta'">100 ta</span>
+                </div>
+                <div th:if="${#lists.isEmpty(products)}" style="text-align: center; color: var(--text-muted); margin: auto 0; padding: 2rem;">
+                    Hali mahsulotlar kiritilmagan.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Buyurtmalar Boshqaruvi')}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('admin-orders')}"></header>
+
+<main class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Mijozlar Buyurtmalari Boshqaruvi</h1>
+            <p class="page-subtitle">Tizimdagi barcha ulgurji buyurtmalar ro'yxati va ularning statusini yangilash paneli</p>
+        </div>
+    </div>
+
+    <!-- Alert success when order status updated -->
+    <div th:if="${param.updated}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Buyurtma holati muvaffaqiyatli yangilandi!</span>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Buyurtma ID</th>
+                        <th>Mijoz / Hamkor</th>
+                        <th>Sana</th>
+                        <th>Buyurtma Tarkibi</th>
+                        <th>Dona</th>
+                        <th>Jami Narx</th>
+                        <th>Hozirgi Holati</th>
+                        <th>Holatni O'zgartirish</th>
+                        <th>Yetkazish Manzili</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="'#ORD-' + ${order.id}" style="font-weight: 600;">#ORD-1</td>
+                        <td>
+                            <div th:text="${order.user.fullName}" style="font-weight: 600;">Client Name</div>
+                            <div th:text="${order.user.email}" style="font-size: 0.8rem; color: var(--text-muted);">email@example.com</div>
+                        </td>
+                        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">01.01.2026 12:00</td>
+                        <td>
+                            <div th:each="item : ${order.items}" th:text="${item.product.name}">Jeans</div>
+                        </td>
+                        <td>
+                            <div th:each="item : ${order.items}" th:text="${item.quantity}">100</div>
+                        </td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}" style="font-weight: 700; color: var(--accent);">
+                            $3,500.00
+                        </td>
+                        <td>
+                            <span th:if="${order.status == 'PENDING'}" class="badge badge-pending">Kutilmoqda</span>
+                            <span th:if="${order.status == 'PROCESSING'}" class="badge badge-processing">Jarayonda</span>
+                            <span th:if="${order.status == 'COMPLETED'}" class="badge badge-completed">Bajarildi</span>
+                            <span th:if="${order.status == 'CANCELLED'}" class="badge badge-cancelled">Bekor qilindi</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/orders/status}" method="post" style="display: flex; gap: 0.5rem; align-items: center;">
+                                <input type="hidden" name="orderId" th:value="${order.id}">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <select name="status" class="form-select" style="padding: 0.4rem 2rem 0.4rem 1rem; font-size: 0.85rem; background-position: right 0.5rem center; background-size: 1rem;" onchange="this.form.submit()">
+                                        <option value="PENDING" th:selected="${order.status == 'PENDING'}">Kutilmoqda</option>
+                                        <option value="PROCESSING" th:selected="${order.status == 'PROCESSING'}">Jarayonda</option>
+                                        <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">Bajarildi</option>
+                                        <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">Bekor qilish</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </td>
+                        <td th:text="${order.shippingAddress}" style="font-size: 0.85rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" th:title="${order.shippingAddress}">
+                            Tashkent
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 3rem 0;">
+                            Hali tizimda birorta ham buyurtma rasmiylashtirilmagan.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

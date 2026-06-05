@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Hisobotlar va Tahlillar')}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('admin-reports')}"></header>
+
+<main class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Savdo va Tizim Hisobotlari</h1>
+            <p class="page-subtitle">Savdo ko'rsatkichlari dinamikasi va buyurtmalar holati vizual diagrammalarda</p>
+        </div>
+    </div>
+
+    <!-- Reports graphs -->
+    <div class="reports-grid" style="margin-bottom: 2rem;">
+        
+        <!-- Sales line chart -->
+        <div class="dashboard-card">
+            <h2 class="card-title">Haftalik Ulgurji Savdolar ($)</h2>
+            <div class="chart-wrapper">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Order status doughnut chart -->
+        <div class="dashboard-card" style="display: flex; flex-direction: column;">
+            <h2 class="card-title">Buyurtmalar Statusi Taqsimoti</h2>
+            <div class="chart-wrapper" style="flex: 1;">
+                <canvas id="statusChart" 
+                        th:data-pending="${stats.pendingOrders}" 
+                        th:data-processing="${stats.processingOrders}" 
+                        th:data-completed="${stats.completedOrders}">
+                </canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Overview data grid -->
+    <div class="dashboard-card">
+        <h2 class="card-title">Tizim Ko'rsatkichlari Jadvali</h2>
+        <div class="table-responsive">
+            <table class="table" style="text-align: center;">
+                <thead>
+                    <tr>
+                        <th>Ko'rsatkich</th>
+                        <th>Joriy Qiymat</th>
+                        <th>Tavsif</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Umumiy Savdo ($)</strong></td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(stats.totalSales, 1, 'COMMA', 2, 'POINT')}" style="color: var(--accent); font-weight: 700; font-size: 1.1rem;">$0.00</td>
+                        <td>Muvaffaqiyatli, jarayondagi va kutilayotgan buyurtmalar jami qiymati</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Buyurtmalar Soni</strong></td>
+                        <td th:text="${stats.totalOrders} + ' ta'" style="font-weight: 600;">0 ta</td>
+                        <td>Tizimga kiritilgan barcha ulgurji shartnomalar soni</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kutilayotgan Shartnomalar</strong></td>
+                        <td th:text="${stats.pendingOrders} + ' ta'" style="color: var(--warning); font-weight: 600;">0 ta</td>
+                        <td>Admin tomonidan tasdiqlanishi kutilayotgan buyurtmalar</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jarayondagi Shartnomalar</strong></td>
+                        <td th:text="${stats.processingOrders} + ' ta'" style="color: var(--info); font-weight: 600;">0 ta</td>
+                        <td>Ombordan yig'ilayotgan va yetkazib berilayotgan buyurtmalar</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bajarilgan Shartnomalar</strong></td>
+                        <td th:text="${stats.completedOrders} + ' ta'" style="color: var(--success); font-weight: 600;">0 ta</td>
+                        <td>Mijozlarga to'liq yetkazilgan shartnomalar</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kiyim Modellari Soni</strong></td>
+                        <td th:text="${stats.totalProducts} + ' xil'" style="font-weight: 600;">0 xil</td>
+                        <td>Katalogga kiritilgan joriy kiyim turlari</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

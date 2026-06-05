@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('dashboard')}"></header>
+
+<main class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title" th:text="'Assalomu alaykum, ' + ${currentUser.fullName}">Foydalanuvchi</h1>
+            <p class="page-subtitle">Ulgurji kiyim-kechak buyurtmalari boshqaruv tizimi paneli</p>
+        </div>
+        <div>
+            <a th:href="@{/orders/create}" class="btn btn-accent" style="width: auto;">
+                <i class="fa-solid fa-cart-plus"></i> Yangi Buyurtma
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats widgets -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>Jami Buyurtmalar</h3>
+                <div class="stat-value" th:text="${orderCount}">0</div>
+            </div>
+            <div class="stat-icon primary">
+                <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>Jami Xaridlar</h3>
+                <div class="stat-value" th:text="'$' + ${#numbers.formatDecimal(totalSpent, 1, 'COMMA', 2, 'POINT')}">$0.00</div>
+            </div>
+            <div class="stat-icon success">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>Mavjud Mahsulotlar</h3>
+                <div class="stat-value">5 xil</div>
+            </div>
+            <div class="stat-icon accent">
+                <i class="fa-solid fa-shirt"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="dashboard-card">
+        <div class="card-title">
+            <span>Oxirgi Buyurtmalarim</span>
+            <a th:href="@{/orders}" style="font-size: 0.85rem; color: var(--accent);"><i class="fa-solid fa-arrow-right"></i> Hammasi</a>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sana</th>
+                        <th>Mahsulotlar</th>
+                        <th>Umumiy Narx</th>
+                        <th>Holati</th>
+                        <th>Manzil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="'#ORD-' + ${order.id}">#ORD-1</td>
+                        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">01.01.2026</td>
+                        <td>
+                            <div th:each="item : ${order.items}" th:text="${item.product.name} + ' (x' + ${item.quantity} + ')'">Jeans (x100)</div>
+                        </td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+                        <td>
+                            <span th:if="${order.status == 'PENDING'}" class="badge badge-pending">Kutilmoqda</span>
+                            <span th:if="${order.status == 'PROCESSING'}" class="badge badge-processing">Jarayonda</span>
+                            <span th:if="${order.status == 'COMPLETED'}" class="badge badge-completed">Bajarildi</span>
+                            <span th:if="${order.status == 'CANCELLED'}" class="badge badge-cancelled">Bekor qilindi</span>
+                        </td>
+                        <td th:text="${order.shippingAddress}">Tashkent, Uzbekistan</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Sizda hali buyurtmalar mavjud emas.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

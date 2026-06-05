@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Kiyim-kechaklar Katalogi')}"></head>
+<body>
+
+<header th:replace="~{fragments :: header('products')}"></header>
+
+<main class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Mahsulotlar Katalogi</h1>
+            <p class="page-subtitle">Ulgurji xaridlar uchun tayyor kiyim-kechaklar to'plami</p>
+        </div>
+        
+        <!-- Search bar -->
+        <div style="width: 100%; max-width: 400px;">
+            <form th:action="@{/products}" method="get" style="display: flex; gap: 0.5rem;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <div class="form-control-wrapper">
+                        <i class="fa-solid fa-magnifying-glass form-control-icon"></i>
+                        <input type="text" name="search" th:value="${searchQuery}" class="form-control" placeholder="Kiyim turini qidiring..." style="padding: 0.6rem 1rem 0.6rem 2.5rem;">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-secondary" style="width: auto; padding: 0 1.25rem;">Qidirish</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products grid -->
+    <div class="catalog-grid" th:if="${!#lists.isEmpty(products)}">
+        <div class="product-card" th:each="product : ${products}">
+            <div class="product-img-wrapper">
+                <img th:src="${product.imageUrl}" class="product-img" th:alt="${product.name}">
+                <span class="product-category-tag" th:text="${product.category}">T-Shirt</span>
+            </div>
+            
+            <div class="product-body">
+                <span class="product-sku" th:text="${product.sku}">SKU-001</span>
+                <h2 class="product-name" th:text="${product.name}">Premium Shirt</h2>
+                <p class="product-desc" th:text="${product.description}">High-quality cotton shirt.</p>
+                
+                <div class="product-footer">
+                    <span class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">$15.00</span>
+                    <span class="product-stock" th:classappend="${product.stockQuantity < 50} ? 'low' : ''" 
+                          th:text="${product.stockQuantity > 0} ? 'Omborda: ' + ${product.stockQuantity} + ' ta' : 'Tugagan'">
+                        Omborda: 100 ta
+                    </span>
+                </div>
+                
+                <div class="product-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-secondary" style="padding: 0.5rem;"><i class="fa-solid fa-circle-info"></i> Tafsilotlar</a>
+                    <a th:href="@{/orders/create(productId=${product.id})}" class="btn" style="padding: 0.5rem;"><i class="fa-solid fa-cart-shopping"></i> Buyurtma</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty view -->
+    <div th:if="${#lists.isEmpty(products)}" style="text-align: center; padding: 4rem 2rem; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <i class="fa-solid fa-shirt-slash" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+        <h2>Hech qanday mahsulot topilmadi</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Qidiruv so'rovini o'zgartirib qaytadan urinib ko'ring yoki katalogga qayting.</p>
+        <a th:href="@{/products}" class="btn btn-secondary" style="width: auto; display: inline-flex; margin-top: 1.5rem;">Katalogga Qaytish</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
