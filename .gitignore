@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Data / Database ###
+data/
+*.db
+
