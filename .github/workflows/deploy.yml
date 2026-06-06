@@ -24,23 +24,18 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -x test
 
+    - name: Configure SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
+
     - name: Copy JAR to Azure VM via SCP
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.VM_IP }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "build/libs/crm-0.0.1-SNAPSHOT.jar"
-        target: "/home/azureuser/Clothes-CRM/"
-        strip_components: 0
-        overwrite: true
+      run: |
+        scp -i ~/.ssh/id_rsa build/libs/crm-0.0.1-SNAPSHOT.jar ${{ secrets.VM_USER }}@${{ secrets.VM_IP }}:/home/azureuser/Clothes-CRM/build/libs/
 
     - name: Restart Spring Boot Service via SSH
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.VM_IP }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          sudo systemctl restart clothes-crm
-          echo "Application successfully redeployed and restarted!"
+      run: |
+        ssh -i ~/.ssh/id_rsa ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "sudo systemctl restart clothes-crm"
+
